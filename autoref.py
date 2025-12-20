@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(
     description='autoref - apply autoref to Quarto output')
 parser.add_argument("path")
 parser.add_argument("snippets_dir")
+parser.add_argument("--output_file", default="output.tex")
 args = parser.parse_args()
 
 SNIPPETS_DIR = args.snippets_dir
@@ -47,8 +48,13 @@ for line in content.split("\n"):
         # print(line)
     elif line.startswith("\caption") or line.startswith("\subcaption"):
         matches = re.search(r"\\(?:sub)?caption{\\label{(.*?)}(.*)}", line)
-        current_id = matches.group(1)
-        current_caption = matches.group(2)
+        if matches is not None:
+            current_id = matches.group(1)
+            current_caption = matches.group(2)
+        else:
+            matches = re.search(r"\\(?:sub)?caption{(.*?)}\\label{(.*?)}", line)
+            current_caption = matches.group(1)
+            current_id = matches.group(2)
     elif "\includegraphics" in line:
         matches = re.search(r"\\includegraphics{(.*?)}", line)
         current_filename = matches.group(1)
@@ -115,5 +121,5 @@ for line in content.split("\n"):
 
 output = "\n".join(buffer)
 
-with open("output.tex", "wt", encoding="UTF-8") as writer:
+with open(args.output_file, "wt", encoding="UTF-8") as writer:
     writer.write(output)
