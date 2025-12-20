@@ -4,12 +4,13 @@ import os.path
 
 import helpers.snippets
 
-SNIPPETS_DIR = "snippets/"
-
 parser = argparse.ArgumentParser(
     description='autoref - apply autoref to Quarto output')
 parser.add_argument("path")
+parser.add_argument("snippets_dir")
 args = parser.parse_args()
+
+SNIPPETS_DIR = args.snippets_dir
 
 with open(args.path, encoding="UTF-8") as reader:
     content = reader.read()
@@ -62,7 +63,7 @@ for line in content.split("\n"):
             buffer.append(line)
             continue
 
-        snippets_path = f"{SNIPPETS_DIR}{current_id}.tex"
+        snippets_path = os.path.join(SNIPPETS_DIR, f"{current_id}.tex")
         if kind == "longtable":
             snippet = helpers.snippets.build_table_snippet(
                 snippets_path,
