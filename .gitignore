@@ -1,0 +1,12 @@
+figures/
+snippets/
+tikz/
+*.sh
+*.aux
+*.tex
+*.pdf
+*.bib
+*.txt
+*.out
+*.log
+*.pyc
