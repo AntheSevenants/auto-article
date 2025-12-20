@@ -39,11 +39,14 @@ for line in content.split("\n"):
         current_id = matches.group(1)
 
         block_output = True
-    if line.startswith("\\begin{figure}"):
+    elif line.startswith("\\begin{longtable}"):
+        current_id = "table"
+        block_output = True
+    elif line.startswith("\\begin{figure}"):
         current_id = "figure"
         minipage_count = 0
         block_output = True
-    if line.startswith("\\begin{minipage}[t]"):
+    elif line.startswith("\\begin{minipage}[t]"):
         is_true_minipage = True
         # print(line)
     elif line.startswith("\caption") or line.startswith("\subcaption"):
