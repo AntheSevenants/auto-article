@@ -19,6 +19,8 @@ with open(args.path, encoding="UTF-8") as reader:
 # Replace normal references with "autoref"
 content = re.sub(r"(Figure|Table|Equation|Section)~\\ref", "\\\\autoref", content)
 
+content = re.sub(r"https:\/\/github\.com\/AntheSevenants\/([a-z-_])+", "\\\\repoLink", content)
+
 # Now, let's go over all lines and replace tables with my own tables
 current_type = None
 current_id = None
