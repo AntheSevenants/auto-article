@@ -20,6 +20,8 @@ with open(args.path, encoding="UTF-8") as reader:
 content = re.sub(r"(Figure|Table|Equation|Section)~\\ref", "\\\\autoref", content)
 
 content = re.sub(r"https:\/\/github\.com\/AntheSevenants\/([a-z-_])+", "\\\\repoLink", content)
+content = re.sub(r"\\\[\s*\\begin{align}", "\\\\begin{align}", content)
+content = re.sub(r"\\end{align}\s*\\\]", "\\\\end{align}", content)
 
 # Now, let's go over all lines and replace tables with my own tables
 current_type = None
