@@ -23,6 +23,9 @@ content = re.sub(r"https:\/\/github\.com\/AntheSevenants\/([a-z-_])+", "\\\\repo
 content = re.sub(r"\\\[\s*\\begin{align}", "\\\\begin{align}", content)
 content = re.sub(r"\\end{align}\s*\\\]", "\\\\end{align}", content)
 
+content = re.sub("gender-from-name-r", "\\\\genderfromnamer", content)
+content = re.sub("ElasticToolsR", "\\\\ElasticToolsR", content)
+
 # Now, let's go over all lines and replace tables with my own tables
 current_type = None
 current_id = None
