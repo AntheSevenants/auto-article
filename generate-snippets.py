@@ -27,7 +27,7 @@ for figure in figures.split("\n"):
     else:
         print(f"No valid figure file: {figure}")
 
-    out = f"\includegraphics[scale={args.scale}]{{{graphics_path}}}"
+    out = f"\\includegraphics[scale={args.scale}]{{{graphics_path}}}"
     out_path = os.path.join(args.snippets_dir, f"{figure}.tex")
 
     with open(out_path, "wt") as writer:

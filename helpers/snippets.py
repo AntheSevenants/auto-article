@@ -36,7 +36,7 @@ def build_minipage_snippet(snippet_path, snippet_id, snippet_caption, include_fi
     if minipage_count % 2 == 0:
         suffix = "\\qquad"
 
-    skeleton = f"""\subfloat[{{{snippet_caption}}} \label{{{snippet_id}}}]{{
+    skeleton = f"""\\subfloat[{{{snippet_caption}}} \\label{{{snippet_id}}}]{{
 {get_snippet(snippet_path)}
 }}
 {suffix}"""
@@ -49,8 +49,8 @@ def build_figure_snippet_rejected(snippet_path, snippet_id, snippet_caption, inc
 
     if path.suffix == ".pdf":
         snippet = f"""\\begin{{figure}}
-\input{{tikz/{path.stem}.tikz}}
-\end{{figure}}
+\\input{{tikz/{path.stem}.tikz}}
+\\end{{figure}}
 """
     else:
         print(f"Unsupported filetype: {snippet_id}")

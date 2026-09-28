@@ -17,7 +17,7 @@ with open(args.path, encoding="UTF-8") as reader:
     content = reader.read()
 
 # Replace normal references with "autoref"
-content = re.sub(r"(Figure|Table|Equation|Section)~\\ref", "\\\\autoref", content)
+content = re.sub(r"(Figure|Table|Equation|Section|Listing)~\\ref", "\\\\autoref", content)
 
 content = re.sub(r"https:\/\/github\.com\/AntheSevenants\/([a-z-_])+", "\\\\repoLink", content)
 content = re.sub(r"\\\[\s*\\begin{align}", "\\\\begin{align}", content)
@@ -34,13 +34,14 @@ current_filename = None
 block_output = False
 minipage_count = 0
 is_true_minipage = False
+in_code_listing = False
 inner_buffer = []
 inner_captions = []
 
 buffer = []
 for line in content.split("\n"):
     # print(line)
-    if line.startswith("\hypertarget{tbl-"):
+    if line.startswith(r"\hypertarget{tbl-"):
         matches = re.search(r"\\hypertarget{(.*?)}", line)
         current_type = "table"
         current_id = matches.group(1)
@@ -53,10 +54,18 @@ for line in content.split("\n"):
         current_id = "figure"
         minipage_count = 0
         block_output = True
-    elif line.startswith("\\begin{minipage}[t]"):
+    elif line.startswith("\\begin{codelisting}"):
+        buffer.append(r"\begin{algorithm}")
+        in_code_listing = True
+    elif line.startswith("\\end{codelisting}"):
+        buffer.append(r"\end{algorithm}")
+        in_code_listing = False
+    elif line.startswith(r"\begin{minipage}") and not line.startswith(r"\begin{minipage}[b]"):
+        print("found true minipage:")
+        print(line)
         is_true_minipage = True
         # print(line)
-    elif line.startswith("\caption") or line.startswith("\subcaption"):
+    elif (line.startswith(r"\caption") or line.startswith(r"\subcaption")) and not in_code_listing:
         matches = re.search(r"\\(?:sub)?caption{\\label{(.*?)}(.*)}", line)
         if matches is not None:
             current_id = matches.group(1)
@@ -65,8 +74,9 @@ for line in content.split("\n"):
             matches = re.search(r"\\(?:sub)?caption{(.*?)}\\label{(.*?)}", line)
             current_caption = matches.group(1)
             current_id = matches.group(2)
-    elif "\includegraphics" in line:
-        matches = re.search(r"\\includegraphics{(.*?)}", line)
+        print("discovered:", current_id)
+    elif r"\includegraphics" in line:
+        matches = re.search(r"\\includegraphics(?:\[.*?\]){(.*?)}", line)
         current_filename = matches.group(1)
     elif line.startswith("\\end"):
         matches = re.search(r"\\end{(.*?)}", line)
@@ -80,6 +90,8 @@ for line in content.split("\n"):
             continue
 
         snippets_path = os.path.join(SNIPPETS_DIR, f"{current_id}.tex")
+        print("= kind:", kind)
+        print("= id:", current_id)
         if kind == "longtable":
             snippet = helpers.snippets.build_table_snippet(
                 snippets_path,
@@ -97,6 +109,7 @@ for line in content.split("\n"):
             )
 
             if len(inner_buffer) > 0:
+                print("replace")
                 inner_content = "\n".join(inner_buffer)
                 snippet = snippet.replace("__INSERT__", inner_content)
 
@@ -104,7 +117,10 @@ for line in content.split("\n"):
             inner_captions = []
         elif kind == "minipage":
             if not is_true_minipage:
+                print("skipped fake minipage")
                 continue
+            else:
+                print("is true minipage")
 
             minipage_count += 1
             snippet = helpers.snippets.build_minipage_snippet(
