@@ -17,6 +17,8 @@ allow_output = False
 for line in content.split("\n"):
     if line.startswith("\\newdimen"):
         buffer.append(line)
+    elif line.startswith("\\usetikzlibrary"):
+        buffer.append(line)
     elif line.startswith("\\begin{tikzpicture}"):
         buffer.append("")
         buffer.append(line)
