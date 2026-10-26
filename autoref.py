@@ -76,7 +76,7 @@ for line in content.split("\n"):
             current_id = matches.group(2)
         print("discovered:", current_id)
     elif r"\includegraphics" in line:
-        matches = re.search(r"\\includegraphics(?:\[.*?\]){(.*?)}", line)
+        matches = re.search(r"\\includegraphics(?:\[.*?\])?{(.*?)}", line)
         current_filename = matches.group(1)
     elif line.startswith("\\end"):
         matches = re.search(r"\\end{(.*?)}", line)
